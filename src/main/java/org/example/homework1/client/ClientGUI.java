@@ -1,14 +1,17 @@
-package org.example.homework1;
+package org.example.homework1.client;
+
+
+import org.example.homework1.entity.Message;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
 import java.io.IOException;
 
 
-
-public class ClientGUI extends JFrame implements ClientService {
+public class ClientGUI extends JFrame implements ClientView {
     private static final int WIDTH = 400;
     private static final int HEIGHT = 300;
 
@@ -23,27 +26,33 @@ public class ClientGUI extends JFrame implements ClientService {
     private final JPanel panelBottom = new JPanel(new GridLayout(1,2));
     private final JTextField tfMessage = new JTextField();
     private final JButton btnSend = new JButton("Send");
+    private ClientController clientController;
 
-    private boolean isClientConnect;
-    private String name;
-    private Message message;
+    public void setClientController(ClientController clientController) {
+        this.clientController = clientController;
+    }
 
-    private ServerWindow server;
-
-    ClientGUI(ServerWindow serverWindow) throws IOException {
-        this.server = serverWindow;
-        message = new Message();
+    public ClientGUI() throws IOException {
         btnLogin.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                connectToServer();
+                clientController.connectToServer(tfLogin.getText());
+                if (clientController.isClientConnect()) {
+                    panelTop.setVisible(true);
+                } else {
+                    panelTop.setVisible(false);
+                }
+
             }
         });
 
         btnSend.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                sendMessage();
+                Message message = clientController.getMessage();
+                message.setText(tfLogin.getText() + " " + tfMessage.getText());
+                clientController.message(message);
+                tfMessage.setText("");
             }
         });
 
@@ -71,49 +80,26 @@ public class ClientGUI extends JFrame implements ClientService {
     }
 
     @Override
-    public void connectToServer() {
-        if (server.connectUser(this)){
-            name = tfLogin.getText();
-            appendLog(name + " " + "успешно подключен!\n");
-            panelTop.setVisible(false);
-            isClientConnect = true;
-            String log = server.loadHistory();
-            if (log != null){
-                appendLog(log);
-            }
-        } else {
-            appendLog("Подключение не удалось");
-        }
+    public void disconnectedFromServer() {
+        panelTop.setVisible(true);
+        log.append("Вы отключены от сервера!");
+    }
+
+    public void disconnectFromServer(){
+        clientController.disconnectFromServer();
     }
 
     @Override
-    public void disconnectServer() {
-        if (isClientConnect) {
-            panelTop.setVisible(true);
-            isClientConnect = false;
-            server.disconnectUser(this);
-            appendLog("Вы отключены от сервера!");
-        }
+    public void showMessage(Message message) {
+        log.append(message.getText() + "\n");
     }
+
 
     @Override
-    public void sendMessage() {
-        if (server.isServerWorking()) {
-            message.setText(tfLogin.getText() + " " + tfMessage.getText());
-            log.append(message.getText() + "\n");
-            server.getMessage(message);
-            tfMessage.setText("");
-        } else {
-            appendLog("Нет подключения" + "\n");
+    protected void processWindowEvent(WindowEvent e) {
+        super.processWindowEvent(e);
+        if (e.getID() == WindowEvent.WINDOW_CLOSING){
+            disconnectFromServer();
         }
-    }
-
-    @Override
-    public void getMessageFromServer(Message message) {
-        appendLog(message.getText() + "\n");
-    }
-
-    private void appendLog(String text) {
-        log.append(text + "\n");
     }
 }

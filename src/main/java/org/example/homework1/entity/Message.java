@@ -1,4 +1,4 @@
-package org.example.homework1;
+package org.example.homework1.entity;
 
 public class Message {
 

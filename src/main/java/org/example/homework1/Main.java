@@ -1,6 +1,12 @@
 package org.example.homework1;
 
 
+import org.example.homework1.client.ClientController;
+import org.example.homework1.client.ClientGUI;
+import org.example.homework1.repo.FileStorage;
+import org.example.homework1.server.ServerController;
+import org.example.homework1.server.ServerWindow;
+
 import java.io.IOException;
 
 /**
@@ -18,11 +24,11 @@ public class Main {
 
 
     public static void main(String[] args) {
-        ServerWindow serverWindow = null;
+        ServerController serverController = null;
         try {
-            serverWindow = new ServerWindow();
-            new ClientGUI(serverWindow);
-            new ClientGUI(serverWindow);
+            serverController = new ServerController(new ServerWindow(), new FileStorage());
+            new ClientController(new ClientGUI(), serverController);
+            new ClientController(new ClientGUI(), serverController);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
