@@ -34,7 +34,10 @@ public class Main {
         if (getEmployeeByExperience.isEmpty()) throw new RuntimeException("Сотрудника с таким табельным номером нет");
         System.out.println(getEmployeeByPersonnelNumber);
 
-        List<Employee> addNewEmployee = employeeService.addNewEmployee();
-        System.out.println(addNewEmployee);
+        Employee addNewEmployee = employeeService.addNewEmployee();
+        EmployeeDB employeeDB = new EmployeeDB();
+        List<Employee> allEmployee = employeeDB.getAllEmployee();
+        allEmployee.add(addNewEmployee);
+        System.out.println(allEmployee);
     }
 }

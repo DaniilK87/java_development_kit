@@ -14,5 +14,5 @@ public interface EmployeeService {
     List<Employee> getEmployeeByExperience(int experience);
     List<String> getTelephoneByName(String name);
     Employee getEmployeeByPersonnelNumber(String personnelNumber);
-    List<Employee> addNewEmployee();
+    Employee addNewEmployee();
 }

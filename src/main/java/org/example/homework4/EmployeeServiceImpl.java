@@ -11,8 +11,7 @@ public class EmployeeServiceImpl implements EmployeeService{
     private Scanner scanner = new Scanner(System.in);
 
 
-    public List<Employee> addNewEmployee() {
-        List<Employee> employees = employeeDB.getAllEmployee();
+    public Employee addNewEmployee() {
         System.out.println("Добавьте нового сотрудника");
         System.out.println("Введите имя:");
         employee.setName(scanner.next());
@@ -22,8 +21,7 @@ public class EmployeeServiceImpl implements EmployeeService{
         employee.setPersonnelNumber(scanner.next());
         System.out.println("Введите стаж:");
         employee.setExperience(scanner.nextInt());
-        employees.add(employee);
-        return employees;
+        return employee;
     }
 
     @Override
